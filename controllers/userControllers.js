@@ -17,14 +17,14 @@ export function createUser(req, res) {
     newUser.save()
     .then(
         () => {
-            res.json({
+            res.status(201).json({
                 message: "User created successfully"
             })
 
         }
     ).catch(
         () => {
-            res.json({
+            res.status(500).json({
                 message: "Error creating user"
             })
         }
@@ -67,7 +67,12 @@ export function loginUser(req,res){
                     res.json(
                         {
                             message : "Login sucsess",
-                            token : token
+                            token : token,
+                            role : User.role,
+
+
+
+
                         }
                     )
                 }else{

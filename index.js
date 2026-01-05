@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import user from './router/userRouter.js'
 import productRouter from './router/productRouter.js'
 import auturizationMiddleware from './lib/jwtMiddleWare.js';
+import cors from 'cors';
 
 const mongoURL = "mongodb+srv://admin:2003@cluster0.vnhnwd0.mongodb.net/?appName=Cluster0"
 
@@ -11,6 +12,7 @@ mongoose.connect(mongoURL).then(() => { console.log("MongoDB connected") }).catc
 const app = express()
 
 app.use(express.json()) 
+app.use(cors())
 
 app.use("/users", user)
 app.use("/products", auturizationMiddleware, productRouter)

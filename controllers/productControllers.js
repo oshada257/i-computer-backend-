@@ -1,6 +1,67 @@
 import { isAdmin } from "./userControllers.js";
 import product from '../models/product.js';
 
+// Upload image controller
+export async function uploadProductImage(req, res) {
+    if (!isAdmin(req)) {
+        res.status(403).json({
+            message: "Access denied. Admins only."
+        });
+        return;
+    }
+
+    try {
+        if (!req.file) {
+            res.status(400).json({
+                message: "No file uploaded"
+            });
+            return;
+        }
+
+        // Return the image path
+        const imagePath = `/images/${req.file.filename}`;
+        res.status(200).json({
+            message: "Image uploaded successfully",
+            imagePath: imagePath
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+// Upload multiple images controller
+export async function uploadProductImages(req, res) {
+    if (!isAdmin(req)) {
+        res.status(403).json({
+            message: "Access denied. Admins only."
+        });
+        return;
+    }
+
+    try {
+        if (!req.files || req.files.length === 0) {
+            res.status(400).json({
+                message: "No files uploaded"
+            });
+            return;
+        }
+
+        // Return array of image paths
+        const imagePaths = req.files.map(file => `/images/${file.filename}`);
+        res.status(200).json({
+            message: "Images uploaded successfully",
+            imagePaths: imagePaths
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+
 export async function createProduct(req, res) {
     // Implementation for creating a product
    
@@ -48,11 +109,18 @@ export async function createProduct(req, res) {
         data.isVisible = req.body.isVisible != null ? req.body.isVisible : true;
         data.brand = req.body.brand || "generic";
         data.model = req.body.model || "standard";
+        
+        console.log('Creating product with image paths:', data.image);
+        
         const newProduct = new product(data);
         await newProduct.save();
+        
+        console.log('Product saved successfully with images:', newProduct.image);
+        
         res.status(201).json(
             {
-                message : "Product created successfully"
+                message : "Product created successfully",
+                product: newProduct
             }
         );
         
@@ -190,35 +258,31 @@ export async function getProductById(req, res) {
     // Implementation for retrieving a product by ID
     try {
         const productId = req.params.productId;
-        const foundProduct = await product.findOne({ productId:productId});
+        const foundProduct = await product.findOne({ productId: productId });
 
-        if(product== null){
-            res.status(404).json(
-                {
-                    message : "Product not found"
-                }
-            )
+        if (foundProduct == null) {
+            res.status(404).json({
+                message: "Product not found"
+            });
             return;
         }
-        if(!product.isVisible){
-            if(!isAdmin(req)){
-                res.status(403).json(
-                    {
-                        message : "Access denied. Admins only."
-                    }
-                )
+        
+        // If product is not visible, only admin can view it
+        if (!foundProduct.isVisible) {
+            if (!isAdmin(req)) {
+                res.status(403).json({
+                    message: "This product is not available"
+                });
                 return;
             }
         }
+        
         res.status(200).json(foundProduct);
     } catch (error) {
-        res.status(500).json(
-            {
-                message : "Internal server error"
-            }
-        )
+        res.status(500).json({
+            message: "Internal server error"
+        });
     }
-    
 }
 
   

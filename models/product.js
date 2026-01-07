@@ -41,12 +41,13 @@ const productSchema = new mongoose.Schema(
             type: [String],
             default: ["/images/default-product.png"],
         },
-      
+
         isVisible : {
             type: Boolean,
-            required: true,
-            default: true
+            default: true,
         },
+      
+     
 
         brand : {   
             type: String,

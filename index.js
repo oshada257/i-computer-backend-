@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose' 
 import user from './router/userRouter.js'
 import productRouter from './router/productRouter.js'
+import orderRouter from './router/orderRouter.js'
 import auturizationMiddleware from './lib/jwtMiddleWare.js';
 import cors from 'cors';
 
@@ -14,9 +15,16 @@ const app = express()
 app.use(express.json()) 
 app.use(cors())
 
+// Serve static files (images) from the public directory
+app.use('/images', express.static('public/images'))
+
 app.use("/users", user)
-app.use("/products", auturizationMiddleware, productRouter)
+
+// Public product routes (no auth required)
 app.use("/products", productRouter)
+
+// Order routes (authentication required)
+app.use("/orders", orderRouter)
 
 
 app.listen(3000, () => { console.log('Server running on http://localhost:3000') })

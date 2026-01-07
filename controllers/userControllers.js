@@ -52,7 +52,7 @@ export function loginUser(req,res){
 
                     const token = jwt.sign(
                         {
-                    
+                            id : User._id,
                             email : User.email,
                             firstName : User.firstName,
                             lastName : User.lastName,

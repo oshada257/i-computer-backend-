@@ -1,0 +1,35 @@
+import express from 'express';
+import mongoose from 'mongoose' 
+import user from './router/userRouter.js'
+import productRouter from './router/productRouter.js'
+import orderRouter from './router/orderRouter.js'
+import auturizationMiddleware from './lib/jwtMiddleWare.js';
+import cors from 'cors';
+
+const mongoURL = "mongodb+srv://admin:2003@cluster0.vnhnwd0.mongodb.net/?appName=Cluster0"
+
+mongoose.connect(mongoURL).then(() => { console.log("MongoDB connected") }).catch(() => { console.log("MongoDB connection failed") })
+
+const app = express()
+
+app.use(express.json()) 
+app.use(cors())
+
+// Serve static files (images) from the public directory
+app.use('/images', express.static('public/images'))
+
+app.use("/users", user)
+
+// Public product routes (no auth required)
+app.use("/products", productRouter)
+
+// Order routes (authentication required)
+app.use("/orders", orderRouter)
+
+
+app.listen(3000, () => { console.log('Server running on http://localhost:3000') })
+
+app.post('/', (req, res) => {
+    res.send('Hello World!');
+});
+

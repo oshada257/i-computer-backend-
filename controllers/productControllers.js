@@ -107,6 +107,7 @@ export async function createProduct(req, res) {
         data.category = req.body.category || "others";
         data.image = req.body.image || ["/images/default-product.png"];
         data.isVisible = req.body.isVisible != null ? req.body.isVisible : true;
+        data.isOnSale = req.body.isOnSale != null ? req.body.isOnSale : false;
         data.brand = req.body.brand || "generic";
         data.model = req.body.model || "standard";
         
@@ -235,6 +236,7 @@ export async function updateProduct(req, res) {
         data.category = req.body.category || "others";
         data.image = req.body.image || ["/images/default-product.png"];
         data.isVisible = req.body.isVisible != null ? req.body.isVisible : true;
+        data.isOnSale = req.body.isOnSale != null ? req.body.isOnSale : false;
         data.brand = req.body.brand || "generic";
         data.model = req.body.model || "standard";
 
@@ -285,4 +287,49 @@ export async function getProductById(req, res) {
     }
 }
 
-  
+// Get all products that are on sale
+export async function getOnSaleProducts(req, res) {
+    try {
+        const products = await product.find({ isVisible: true, isOnSale: true });
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+// Toggle product on sale status
+export async function toggleProductOnSale(req, res) {
+    if (!isAdmin(req)) {
+        res.status(403).json({
+            message: "Access denied. Admins only."
+        });
+        return;
+    }
+
+    try {
+        const productId = req.params.productId;
+        const foundProduct = await product.findOne({ productId: productId });
+
+        if (!foundProduct) {
+            res.status(404).json({
+                message: "Product not found"
+            });
+            return;
+        }
+
+        // Toggle the isOnSale status
+        foundProduct.isOnSale = !foundProduct.isOnSale;
+        await foundProduct.save();
+
+        res.status(200).json({
+            message: foundProduct.isOnSale ? "Product added to sale" : "Product removed from sale",
+            isOnSale: foundProduct.isOnSale
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}

@@ -1,5 +1,5 @@
 import express from "express";
-import { createProduct, deleteProduct, getProductById, getProducts, updateProduct, uploadProductImage, uploadProductImages } from "../controllers/productControllers.js";
+import { createProduct, deleteProduct, getProductById, getProducts, updateProduct, uploadProductImage, uploadProductImages, getOnSaleProducts, toggleProductOnSale } from "../controllers/productControllers.js";
 import upload from "../lib/uploadMiddleware.js";
 import auturizationMiddleware from "../lib/jwtMiddleWare.js";
 
@@ -13,9 +13,13 @@ productRouter.post('/', auturizationMiddleware, createProduct);
 
 productRouter.get('/',getProducts);
 
-productRouter.delete('/:productId',deleteProduct);
+// On sale products routes
+productRouter.get('/on-sale', getOnSaleProducts);
+productRouter.put('/:productId/toggle-sale', auturizationMiddleware, toggleProductOnSale);
+
+productRouter.delete('/:productId', auturizationMiddleware, deleteProduct);
  
-productRouter.put('/:productId',updateProduct);
+productRouter.put('/:productId', auturizationMiddleware, updateProduct);
 
 productRouter.get('/:productId',getProductById);
 

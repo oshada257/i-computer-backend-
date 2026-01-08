@@ -46,8 +46,11 @@ const productSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
-      
-     
+
+        isOnSale : {
+            type: Boolean,
+            default: false,
+        },
 
         brand : {   
             type: String,

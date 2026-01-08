@@ -137,6 +137,7 @@ const orderSchema = new mongoose.Schema(
 
 // Index for faster queries
 orderSchema.index({ userId: 1, createdAt: -1 });
+orderSchema.index({ orderId: 1 });
 
 // Virtual for order date formatting
 orderSchema.virtual('formattedOrderDate').get(function() {

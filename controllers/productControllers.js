@@ -1,7 +1,6 @@
 import { isAdmin } from "./userControllers.js";
 import product from '../models/product.js';
 
-// Upload image controller
 export async function uploadProductImage(req, res) {
     if (!isAdmin(req)) {
         res.status(403).json({
@@ -18,7 +17,6 @@ export async function uploadProductImage(req, res) {
             return;
         }
 
-        // Return the image path
         const imagePath = `/images/${req.file.filename}`;
         res.status(200).json({
             message: "Image uploaded successfully",
@@ -31,7 +29,6 @@ export async function uploadProductImage(req, res) {
     }
 }
 
-// Upload multiple images controller
 export async function uploadProductImages(req, res) {
     if (!isAdmin(req)) {
         res.status(403).json({
@@ -48,7 +45,6 @@ export async function uploadProductImages(req, res) {
             return;
         }
 
-        // Return array of image paths
         const imagePaths = req.files.map(file => `/images/${file.filename}`);
         res.status(200).json({
             message: "Images uploaded successfully",
@@ -63,7 +59,6 @@ export async function uploadProductImages(req, res) {
 
 
 export async function createProduct(req, res) {
-    // Implementation for creating a product
    
    if(!isAdmin(req)){
         res.status(403).json(
@@ -74,7 +69,6 @@ export async function createProduct(req, res) {
         return;
    }
    try {
-        // Extract product details from request body
         const existingProduct = await product.findOne
         ({ productId: req.body.productId});
 
@@ -138,7 +132,6 @@ export async function createProduct(req, res) {
 }
 
 export async function getProducts(req, res) {
-    // Implementation for retrieving products
     try {
         if(isAdmin(req)){
         const products = await product.find({ isVisible: true });
@@ -158,7 +151,6 @@ export async function getProducts(req, res) {
 }
 
 export async function deleteProduct(req, res) {
-    // Implementation for deleting a product
     if(!isAdmin(req)){
         res.status(403).json(
             {
@@ -194,7 +186,6 @@ export async function deleteProduct(req, res) {
 }
 
 export async function updateProduct(req, res) {
-    // Implementation for updating a product
     if(!isAdmin(req)){
         res.status(403).json(
             {
@@ -206,7 +197,6 @@ export async function updateProduct(req, res) {
     try {
         const productId = req.params.productId;
 
-        // Check if product exists
         const existingProduct = await product.findOne({ productId: productId });
         
         if (!existingProduct) {
@@ -257,7 +247,6 @@ export async function updateProduct(req, res) {
 }
 
 export async function getProductById(req, res) {
-    // Implementation for retrieving a product by ID
     try {
         const productId = req.params.productId;
         const foundProduct = await product.findOne({ productId: productId });
@@ -269,7 +258,6 @@ export async function getProductById(req, res) {
             return;
         }
         
-        // If product is not visible, only admin can view it
         if (!foundProduct.isVisible) {
             if (!isAdmin(req)) {
                 res.status(403).json({
@@ -287,7 +275,6 @@ export async function getProductById(req, res) {
     }
 }
 
-// Get all products that are on sale
 export async function getOnSaleProducts(req, res) {
     try {
         const products = await product.find({ isVisible: true, isOnSale: true });
@@ -299,7 +286,6 @@ export async function getOnSaleProducts(req, res) {
     }
 }
 
-// Toggle product on sale status
 export async function toggleProductOnSale(req, res) {
     if (!isAdmin(req)) {
         res.status(403).json({
@@ -319,7 +305,6 @@ export async function toggleProductOnSale(req, res) {
             return;
         }
 
-        // Toggle the isOnSale status
         foundProduct.isOnSale = !foundProduct.isOnSale;
         await foundProduct.save();
 

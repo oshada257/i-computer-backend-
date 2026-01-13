@@ -45,7 +45,7 @@ export function loginUser(req,res){
                     }
                 )
             }else{
-                // Check if user is blocked
+                
                 if(User.isBlocked){
                     return res.status(403).json({
                         message: "Your account has been blocked. Please contact support."
@@ -104,7 +104,7 @@ export function isAdmin(req){
     }
 }
 
-// Get all users (admin only)
+
 export function getAllUsers(req, res) {
     if (!isAdmin(req)) {
         return res.status(403).json({ message: "Access denied. Admin only." });
@@ -119,37 +119,3 @@ export function getAllUsers(req, res) {
         });
 }
 
-// Block/Unblock user (admin only)
-export function toggleBlockUser(req, res) {
-    if (!isAdmin(req)) {
-        return res.status(403).json({ message: "Access denied. Admin only." });
-    }
-
-    const userId = req.params.id;
-
-    user.findById(userId)
-        .then((foundUser) => {
-            if (!foundUser) {
-                return res.status(404).json({ message: "User not found" });
-            }
-
-            foundUser.isBlocked = !foundUser.isBlocked;
-            return foundUser.save();
-        })
-        .then((updatedUser) => {
-            res.json({
-                message: `User ${updatedUser.isBlocked ? 'blocked' : 'unblocked'} successfully`,
-                user: {
-                    _id: updatedUser._id,
-                    email: updatedUser.email,
-                    firstName: updatedUser.firstName,
-                    lastName: updatedUser.lastName,
-                    role: updatedUser.role,
-                    isBlocked: updatedUser.isBlocked
-                }
-            });
-        })
-        .catch((err) => {
-            res.status(500).json({ message: "Error updating user", error: err.message });
-        });
-}

@@ -15,15 +15,12 @@ const app = express()
 app.use(express.json()) 
 app.use(cors())
 
-// Serve static files (images) from the public directory
 app.use('/images', express.static('public/images'))
 
 app.use("/users", user)
 
-// Public product routes (no auth required)
 app.use("/products", productRouter)
 
-// Order routes (authentication required)
 app.use("/orders", orderRouter)
 
 

@@ -131,19 +131,16 @@ const orderSchema = new mongoose.Schema(
         }
     },
     {
-        timestamps: true // This adds createdAt and updatedAt automatically
+        timestamps: true
     }
 );
 
-// Index for faster queries
 orderSchema.index({ userId: 1, createdAt: -1 });
 
-// Virtual for order date formatting
 orderSchema.virtual('formattedOrderDate').get(function() {
     return this.createdAt.toLocaleDateString();
 });
 
-// Method to calculate total
 orderSchema.methods.calculateTotal = function() {
     const subtotal = this.items.reduce((sum, item) => sum + item.totalPrice, 0);
     this.orderSummary.subtotal = subtotal;

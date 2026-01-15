@@ -5,8 +5,11 @@ import productRouter from './router/productRouter.js'
 import orderRouter from './router/orderRouter.js'
 import auturizationMiddleware from './lib/jwtMiddleWare.js';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
-const mongoURL = "mongodb+srv://admin:2003@cluster0.vnhnwd0.mongodb.net/?appName=Cluster0"
+dotenv.config();
+
+const mongoURL = process.env.MONGODB_URL
 
 mongoose.connect(mongoURL).then(() => { console.log("MongoDB connected") }).catch(() => { console.log("MongoDB connection failed") })
 
@@ -24,9 +27,8 @@ app.use("/products", productRouter)
 app.use("/orders", orderRouter)
 
 
-app.listen(3000, () => { console.log('Server running on http://localhost:3000') })
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => { console.log(`Server running on http://localhost:${PORT}`) })
 
-app.post('/', (req, res) => {
-    res.send('Hello World!');
-});
+
 

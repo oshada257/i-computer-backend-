@@ -66,13 +66,13 @@ export function loginUser(req,res){
                             image : User.image1,
                             isemailverified : User.isemailverified
                         },
-                        "your-secret-key-here",
+                        process.env.JWT_SECRET,
                         { expiresIn: "1h" }
                     )
 
                     res.json(
                         {
-                            message : "Login sucsess",
+                            message : "Login successful",
                             token : token,
                             role : User.role,
 
@@ -116,6 +116,33 @@ export function getAllUsers(req, res) {
         })
         .catch((err) => {
             res.status(500).json({ message: "Error fetching users", error: err.message });
+        });
+}
+
+export function toggleBlockUser(req, res) {
+    if (!isAdmin(req)) {
+        return res.status(403).json({ message: "Access denied. Admin only." });
+    }
+
+    const userId = req.params.id;
+
+    user.findById(userId)
+        .then((foundUser) => {
+            if (!foundUser) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            foundUser.isBlocked = !foundUser.isBlocked;
+            return foundUser.save();
+        })
+        .then((updatedUser) => {
+            res.json({
+                message: `User ${updatedUser.isBlocked ? 'blocked' : 'unblocked'} successfully`,
+                isBlocked: updatedUser.isBlocked
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({ message: "Error updating user", error: err.message });
         });
 }
 

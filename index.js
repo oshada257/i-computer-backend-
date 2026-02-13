@@ -11,7 +11,9 @@ dotenv.config();
 
 const mongoURL = process.env.MONGODB_URL
 
-mongoose.connect(mongoURL).then(() => { console.log("MongoDB connected") }).catch(() => { console.log("MongoDB connection failed") })
+mongoose.connect(mongoURL).then(() => 
+    { console.log("MongoDB connected") }).catch(() => 
+        { console.log("MongoDB connection failed") })
 
 const app = express()
 

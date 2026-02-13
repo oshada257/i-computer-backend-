@@ -2,7 +2,7 @@ import user from '../models/user.js';
 import jwt from 'jsonwebtoken';
 
 import bcrypt from 'bcrypt';
-export function createUser(req, res) {
+export function     createUser(req, res) {
 
     const HashedPassword = bcrypt.hashSync(req.body.password, 10);  
 
